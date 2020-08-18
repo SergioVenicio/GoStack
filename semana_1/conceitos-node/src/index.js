@@ -1,13 +1,12 @@
-const PORT = 3000;
+const PORT = 3001;
 
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const { uuid } = require("uuidv4");
 const { validate } = require("uuid");
 
 const app = express();
-
-app.use(bodyParser.json());
 
 const logMiddleWare = (request, response, next) => {
   const { method, url } = request;
@@ -27,6 +26,8 @@ const validateUUI = (request, response, next) => {
   return next();
 };
 
+app.use(cors());
+app.use(bodyParser.json());
 app.use(logMiddleWare);
 app.use("/*/:id", validateUUI);
 
@@ -63,14 +64,15 @@ app.get("/projects/:id", (request, response) => {
 
 app.post("/projects", (request, response) => {
   const { title, owner } = request.body;
-  projects.push({
+  const newProject = {
     id: uuid(),
     title,
     owner,
-  });
+  };
+  projects.push(newProject);
 
   return response.status(201).json({
-    message: "OK",
+    ...newProject,
   });
 });
 
