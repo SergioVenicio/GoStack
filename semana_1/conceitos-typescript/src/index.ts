@@ -10,7 +10,8 @@ app.use(express.json());
 const PORT = 3333;
 
 app.get("/", (request, response) => {
-  const tiringa = <User>{
+  type UserResponse = Pick<User, "name" | "email">;
+  const tiringa: UserResponse = {
     name: "Tiringa",
     email: "homiii.vaite@lascar.com.br",
   };
