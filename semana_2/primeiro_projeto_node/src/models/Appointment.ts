@@ -1,4 +1,4 @@
-import { v4 } from 'uuid';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 export interface AppointmentInterface {
   id?: string;
@@ -6,14 +6,14 @@ export interface AppointmentInterface {
   date: Date;
 }
 
+@Entity('appointments')
 export default class Appointment implements AppointmentInterface {
-  id?: string;
-  provider: string;
-  date: Date;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-  constructor({ id, provider, date }: AppointmentInterface) {
-    this.id = id ? id : v4();
-    this.provider = provider;
-    this.date = date;
-  }
+  @Column()
+  provider: string;
+
+  @Column('timestamp with time zone')
+  date: Date;
 }

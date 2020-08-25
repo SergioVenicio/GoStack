@@ -1,27 +1,30 @@
 import { startOfHour } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
 
 import Appointment, { AppointmentInterface } from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
 class CreateAppointmentsService {
-  private appointmentsRepository: AppointmentsRepository;
-
-  constructor(appointmentsRepository: AppointmentsRepository) {
-    this.appointmentsRepository = appointmentsRepository;
-  }
-
-  public execute({ date, provider }: AppointmentInterface): Appointment {
+  public async execute({
+    date,
+    provider,
+  }: AppointmentInterface): Promise<Appointment> {
+    const repository = getCustomRepository(AppointmentsRepository);
     const appointmentDate = startOfHour(date);
 
-    if (this.appointmentsRepository.findByDate(date) !== null) {
+    const alreadyExists = await repository.findByDate(date);
+
+    if (alreadyExists !== null) {
       throw Error('This appointment date already exists!');
     }
 
-    const newAppointment = new Appointment({
+    const appointment = repository.create({
       provider,
       date: appointmentDate,
     });
-    return this.appointmentsRepository.create(newAppointment);
+
+    await repository.save(appointment);
+    return appointment;
   }
 }
 
