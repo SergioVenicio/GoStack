@@ -1,25 +1,26 @@
 import { startOfHour } from 'date-fns';
 import { getCustomRepository } from 'typeorm';
 
+import AppError from '../errors/AppError';
 import Appointment, { AppointmentInterface } from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
 class CreateAppointmentsService {
   public async execute({
     date,
-    provider,
+    provider_id,
   }: AppointmentInterface): Promise<Appointment> {
     const repository = getCustomRepository(AppointmentsRepository);
     const appointmentDate = startOfHour(date);
 
-    const alreadyExists = await repository.findByDate(date);
+    const alreadyExists = await repository.findByDate(appointmentDate);
 
     if (alreadyExists !== null) {
-      throw Error('This appointment date already exists!');
+      throw new AppError('This appointment date already exists!');
     }
 
     const appointment = repository.create({
-      provider,
+      provider_id,
       date: appointmentDate,
     });
 
