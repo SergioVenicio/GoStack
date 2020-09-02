@@ -1,19 +1,21 @@
 import React from "react";
+import { BrowserRouter } from 'react-router-dom'
 
-import { AuthContextProviver } from "./contexts/AuthContext";
+import AppProvider from "./contexts";
 
 import GlobalStyle from "./styles/global";
 
-import SignIn from "./pages/signin";
-import SignUp from "./pages/signup";
+import Routes from './routes'
 
 const App = () => {
   return (
     <>
       <div className="App">
-        <AuthContextProviver>
-          <SignIn />
-        </AuthContextProviver>
+          <BrowserRouter>
+            <AppProvider>
+              <Routes />
+            </AppProvider>
+          </BrowserRouter>
       </div>
       <GlobalStyle />
     </>
