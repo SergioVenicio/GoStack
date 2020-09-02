@@ -1,5 +1,7 @@
 import React from "react";
 
+import { AuthContextProviver } from "./contexts/AuthContext";
+
 import GlobalStyle from "./styles/global";
 
 import SignIn from "./pages/signin";
@@ -9,7 +11,9 @@ const App = () => {
   return (
     <>
       <div className="App">
-        <SignIn />
+        <AuthContextProviver>
+          <SignIn />
+        </AuthContextProviver>
       </div>
       <GlobalStyle />
     </>

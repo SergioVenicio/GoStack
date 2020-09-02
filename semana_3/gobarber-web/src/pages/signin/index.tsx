@@ -4,6 +4,8 @@ import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
 import * as Yup from "yup";
 
+import useAuthContext from "../../contexts/AuthContext";
+
 import Input from "../../components/Input";
 import Button from "../../components/Button";
 
@@ -14,6 +16,7 @@ import getValidationErrors from "../../utils/getValidationErrors";
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { signIn } = useAuthContext();
 
   const handleSubmit = useCallback(async (data): Promise<void> => {
     formRef.current?.setErrors({});
@@ -27,6 +30,10 @@ const SignIn: React.FC = () => {
     try {
       await schema.validate(data, {
         abortEarly: false,
+      });
+      await signIn({
+        email: data.email,
+        password: data.password,
       });
     } catch (error) {
       const errors = getValidationErrors(error);

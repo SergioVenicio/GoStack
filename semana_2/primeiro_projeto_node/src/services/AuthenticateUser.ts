@@ -7,10 +7,23 @@ import authConfig from '../config/auth';
 import AppError from '../errors/AppError';
 import User, { UserInterface } from '../models/User';
 
-type UserAuthPayload = Pick<UserInterface, 'email' | 'password'>;
+interface UserAuthPayload {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}
+
+interface AuthParams {
+  email: string;
+  password: string;
+}
 
 class AuthenticateUser {
-  async execute({ email, password }: UserAuthPayload): Promise<string> {
+  async execute({ email, password }: AuthParams): Promise<UserAuthPayload> {
     const repository = getRepository(User);
     const user = await repository.findOne({
       where: { email },
@@ -31,7 +44,15 @@ class AuthenticateUser {
         expiresIn: authConfig.expiresIn,
       }
     );
-    return token;
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      },
+    };
   }
 }
 

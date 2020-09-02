@@ -4,11 +4,14 @@ import 'express-async-errors';
 import 'reflect-metadata';
 import './database';
 
+import cors from 'cors';
+
 import routes from './routes';
 import uploadCondif from './config/upload';
 
 const PORT = 3333;
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 app.use('/files', express.static(uploadCondif.directory));

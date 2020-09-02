@@ -6,7 +6,7 @@ interface Errors {
 export default (error: ValidationError): Errors => {
   const validationErrors: Errors = {};
 
-  error.inner.forEach((error) => {
+  error?.inner?.forEach((error) => {
     validationErrors[error.path] = error.message;
   });
 
