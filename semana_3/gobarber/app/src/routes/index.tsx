@@ -1,0 +1,23 @@
+import React from "react";
+import { View, ActivityIndicator } from "react-native";
+
+import AuthRoutes from "./auths.routes";
+import AppRoutes from "./app.routes";
+
+import useAuthContext from "../contexts/AuthContext";
+
+const Routes: React.FC = () => {
+  const { user, loading } = useAuthContext();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#999" />
+      </View>
+    );
+  }
+
+  return user ? <AppRoutes /> : <AuthRoutes />;
+};
+
+export default Routes;
