@@ -5,9 +5,9 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "run:dev": "tsnd --respawn --inspect --ignore-watch node_modules src/server.ts",
-    "run:dev:transpile": "tsnd --respawn --inspect --transpile-only --ignore-watch node_modules src/server.ts",
-    "typeorm": "tsnd ./node_modules/typeorm/cli.js"
+    "run:dev": "tsnd -r tsconfig-paths/register --respawn --inspect --ignore-watch node_modules src/shared/infra/http/server.ts",
+    "run:dev:transpile": "tsnd -r tsconfig-paths/register --respawn --inspect --transpile-only --ignore-watch node_modules src/shared/infra/http/server.ts",
+    "typeorm": "tsnd -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -22,9 +22,11 @@
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.1.0",
     "ts-node-dev": "^1.0.0-pre.60",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.2"
   },
   "dependencies": {
+    "@types/uuid-validate": "^0.0.1",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "date-fns": "^2.15.0",
@@ -34,7 +36,9 @@
     "multer": "^1.4.2",
     "pg": "^8.3.2",
     "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.3.0",
     "typeorm": "^0.2.25",
+    "uuid-validate": "^0.0.3",
     "uuidv4": "^6.2.3"
   }
 }

@@ -16,7 +16,12 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "rules": {
-    "prettier/prettier": "error"
+    "no-useless-constructor": "off",
+    "prettier/prettier": "error",
+    "@typescript-eslint/interface-name-prefix": [
+      "error",
+      { "prefixWithI": "always" }
+    ]
   },
   "singleQuote": true
 }

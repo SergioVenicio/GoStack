@@ -1,11 +1,12 @@
-import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
-import authConfig from '../config/auth';
+import { injectable, inject } from 'tsyringe';
 
-import AppError from '../errors/AppError';
-import User, { UserInterface } from '../models/User';
+import authConfig from '@config/auth';
+
+import AppError from '@shared/errors/AppError';
+import IUserRepository from '@modules/users/repositories/IUserRepository';
 
 interface UserAuthPayload {
   token: string;
@@ -22,12 +23,16 @@ interface AuthParams {
   password: string;
 }
 
+@injectable()
 class AuthenticateUser {
+  private _repository: IUserRepository;
+
+  constructor(@inject('UsersRepository') repository: IUserRepository) {
+    this._repository = repository;
+  }
+
   async execute({ email, password }: AuthParams): Promise<UserAuthPayload> {
-    const repository = getRepository(User);
-    const user = await repository.findOne({
-      where: { email },
-    });
+    const user = await this._repository.findByEmail(email);
 
     if (!user || !(await compare(password, user.password))) {
       throw new AppError('Invalid email or password!', 401);

@@ -7,11 +7,11 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import User from './User';
+import User from '@modules/users/infra/typeorm/entities/User';
 
 export interface AppointmentInterface {
   id?: string;
-  provider_id?: string;
+  provider_id: string;
   provider?: User;
   date: Date;
 }
