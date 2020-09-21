@@ -22,15 +22,11 @@ class CreateAppointmentsService {
     provider_id,
   }: AppointmentInterface): Promise<Appointment> {
     const appointmentDate = startOfHour(date);
-
     const alreadyExists = await this._repository.findByDate(appointmentDate);
 
-    if (!alreadyExists) {
+    if (alreadyExists) {
       throw new AppError('This appointment date already exists!');
     }
-
-    console.log(provider_id);
-    console.log(date);
 
     const appointment = this._repository.create({
       provider_id,

@@ -1,12 +1,9 @@
-import path from 'path';
-import fs from 'fs';
-
 import { injectable, inject } from 'tsyringe';
 
-import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import User from '@modules/users/infra/typeorm/entities/User';
 import IUserRepository from '@modules/users/repositories/IUserRepository';
+import IStorageProvider from '@shared/container/providers/StorageProviders/models/IStorageProvider';
 
 interface AvatarPayload {
   mimetype: string;
@@ -19,9 +16,14 @@ export default class AvatarUpload {
   VALID_MIMETYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
   private _repository: IUserRepository;
+  private _storage: IStorageProvider;
 
-  constructor(@inject('UsersRepository') repository: IUserRepository) {
+  constructor(
+    @inject('UsersRepository') repository: IUserRepository,
+    @inject('StorageProvider') storage: IStorageProvider
+  ) {
     this._repository = repository;
+    this._storage = storage;
   }
 
   async execute({ user_id, filename, mimetype }: AvatarPayload): Promise<User> {
@@ -35,18 +37,13 @@ export default class AvatarUpload {
       throw new AppError('Invalid token!', 401);
     }
 
-    console.log(user.avatar);
-
     if (user.avatar) {
-      const oldAvatarPath = path.join(uploadConfig.directory, user.avatar);
-
-      try {
-        await fs.promises.unlink(oldAvatarPath);
-      } catch (e) {}
+      this._storage.deleteFile(user.avatar);
     }
 
-    await this._repository.save({ ...user, avatar: filename });
+    const avatar_path = await this._storage.saveFile(filename);
+    await this._repository.save({ ...user, avatar: avatar_path });
 
-    return user as User;
+    return { ...user, avatar: avatar_path };
   }
 }
