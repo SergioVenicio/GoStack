@@ -4,13 +4,20 @@ import FakeUsersRepository from '@modules/users/repositories/fakes/FakeUsersRepo
 import CreateUser from '@modules/users/services/CreateUser';
 import AuthenticateUser from './AuthenticateUser';
 
-describe('AuthenticateUse', () => {
-  it('should be able to authenticate', async () => {
-    const repository = new FakeUsersRepository();
-    const hashProvider = new FakeHashProvider();
-    const service = new AuthenticateUser(repository, hashProvider);
-    const createService = new CreateUser(repository, hashProvider);
+let repository: FakeUsersRepository;
+let hashProvider: FakeHashProvider;
+let service: AuthenticateUser;
+let createService: CreateUser;
 
+describe('AuthenticateUse', () => {
+  beforeEach(() => {
+    repository = new FakeUsersRepository();
+    hashProvider = new FakeHashProvider();
+    service = new AuthenticateUser(repository, hashProvider);
+    createService = new CreateUser(repository, hashProvider);
+  });
+
+  it('should be able to authenticate', async () => {
     await createService.execute({
       name: 'Test',
       email: 'test@test.com',
@@ -26,18 +33,13 @@ describe('AuthenticateUse', () => {
   });
 
   it('should not be able to authenticate with a invalid password', async () => {
-    const repository = new FakeUsersRepository();
-    const hashProvider = new FakeHashProvider();
-    const service = new AuthenticateUser(repository, hashProvider);
-    const createService = new CreateUser(repository, hashProvider);
-
     await createService.execute({
       name: 'Test',
       email: 'test@test.com',
       password: '123456789',
     });
 
-    expect(
+    await expect(
       service.execute({
         email: 'test@test.com',
         password: '123456',
@@ -46,18 +48,13 @@ describe('AuthenticateUse', () => {
   });
 
   it('should not be able to authenticate with a invalid email', async () => {
-    const repository = new FakeUsersRepository();
-    const hashProvider = new FakeHashProvider();
-    const service = new AuthenticateUser(repository, hashProvider);
-    const createService = new CreateUser(repository, hashProvider);
-
     await createService.execute({
       name: 'Test',
       email: 'test@test.com',
       password: '123456789',
     });
 
-    expect(
+    await expect(
       service.execute({
         email: 'anothertest@test.com',
         password: '123456789',

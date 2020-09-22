@@ -5,15 +5,22 @@ import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
 import AvatarUpload from './AvatarUpload';
 import CreateUser from './CreateUser';
 
+let repository: FakeUsersRepository;
+let storageProvider: FakeStorageProvider;
+let hashProvider: FakeHashProvider;
+let createUser: CreateUser;
+let service: AvatarUpload;
+
 describe('AvatarUpload', () => {
+  beforeEach(() => {
+    repository = new FakeUsersRepository();
+    storageProvider = new FakeStorageProvider();
+    hashProvider = new FakeHashProvider();
+    createUser = new CreateUser(repository, hashProvider);
+    service = new AvatarUpload(repository, storageProvider);
+  });
+
   it('should be able to upload user avatar', async () => {
-    const repository = new FakeUsersRepository();
-    const storageProvider = new FakeStorageProvider();
-    const hashProvider = new FakeHashProvider();
-
-    const createUser = new CreateUser(repository, hashProvider);
-    const service = new AvatarUpload(repository, storageProvider);
-
     const user = await createUser.execute({
       name: 'test',
       email: 'test@test.com',
@@ -30,13 +37,6 @@ describe('AvatarUpload', () => {
   });
 
   it('should be able to update user avatar', async () => {
-    const repository = new FakeUsersRepository();
-    const storageProvider = new FakeStorageProvider();
-    const hashProvider = new FakeHashProvider();
-
-    const createUser = new CreateUser(repository, hashProvider);
-    const service = new AvatarUpload(repository, storageProvider);
-
     const user = await createUser.execute({
       name: 'test',
       email: 'test@test.com',
@@ -59,14 +59,7 @@ describe('AvatarUpload', () => {
   });
 
   it('should not be able to upload invalid user avatar', async () => {
-    const repository = new FakeUsersRepository();
-    const storageProvider = new FakeStorageProvider();
-    const hashProvider = new FakeHashProvider();
-
-    const createUser = new CreateUser(repository, hashProvider);
-    const service = new AvatarUpload(repository, storageProvider);
-
-    expect(
+    await expect(
       service.execute({
         user_id: '927834978213',
         filename: 'test_avatar.jpg',
@@ -76,14 +69,7 @@ describe('AvatarUpload', () => {
   });
 
   it('should not be able to upload user avatar with invalid mimetype', async () => {
-    const repository = new FakeUsersRepository();
-    const storageProvider = new FakeStorageProvider();
-    const hashProvider = new FakeHashProvider();
-
-    const createUser = new CreateUser(repository, hashProvider);
-    const service = new AvatarUpload(repository, storageProvider);
-
-    expect(
+    await expect(
       service.execute({
         user_id: '927834978213',
         filename: 'test_avatar.jpg',

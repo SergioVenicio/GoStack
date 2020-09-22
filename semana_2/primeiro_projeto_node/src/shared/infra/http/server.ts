@@ -15,7 +15,7 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-app.use('/files', express.static(uploadCondif.directory));
+app.use('/files', express.static(uploadCondif.tmp_directory));
 app.use(routes);
 
 app.listen(PORT, () => {
