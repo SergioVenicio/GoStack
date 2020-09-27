@@ -1,13 +1,17 @@
 import AppError from '@shared/errors/AppError';
+
 import FakeHashProvider from '@modules/users/providers/HashProvider/fakes/FakeHashProvider';
 import FakeStorageProvider from '@shared/container/providers/StorageProviders/fake/FakeStorageProvider';
 import FakeUsersRepository from '../repositories/fakes/FakeUsersRepository';
+import FakeCacheProvider from '@shared/container/providers/CacheProviders/fake/FakeCacheProvider';
+
 import AvatarUpload from './AvatarUpload';
 import CreateUser from './CreateUser';
 
 let repository: FakeUsersRepository;
 let storageProvider: FakeStorageProvider;
 let hashProvider: FakeHashProvider;
+let cache: FakeCacheProvider;
 let createUser: CreateUser;
 let service: AvatarUpload;
 
@@ -16,7 +20,8 @@ describe('AvatarUpload', () => {
     repository = new FakeUsersRepository();
     storageProvider = new FakeStorageProvider();
     hashProvider = new FakeHashProvider();
-    createUser = new CreateUser(repository, hashProvider);
+    cache = new FakeCacheProvider();
+    createUser = new CreateUser(repository, hashProvider, cache);
     service = new AvatarUpload(repository, storageProvider);
   });
 

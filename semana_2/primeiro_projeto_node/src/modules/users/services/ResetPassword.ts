@@ -52,6 +52,7 @@ export default class ResetPassword {
     }
 
     const hashedPassword = await this._hashProvider.generateHash(password);
-    await this._userRepository.save({ ...user, password: hashedPassword });
+    user.password = hashedPassword;
+    await this._userRepository.save(user);
   }
 }

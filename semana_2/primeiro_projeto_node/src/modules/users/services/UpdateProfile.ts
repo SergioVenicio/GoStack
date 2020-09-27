@@ -9,7 +9,7 @@ interface IRequest {
   user_id: string;
   name: string;
   email: string;
-  oldPassword?: string;
+  old_password?: string;
   password?: string;
 }
 
@@ -30,7 +30,7 @@ export default class UpdateProfile {
     user_id,
     name,
     email,
-    oldPassword,
+    old_password,
     password,
   }: IRequest): Promise<User | undefined> {
     const user = await this._repository.findById(user_id);
@@ -41,8 +41,8 @@ export default class UpdateProfile {
 
     if (
       password &&
-      (!oldPassword ||
-        !(await this._hashProvider.compareHash(oldPassword, user.password)))
+      (!old_password ||
+        !(await this._hashProvider.compareHash(old_password, user.password)))
     ) {
       throw new AppError('Invalid user email or password!');
     }
@@ -55,11 +55,12 @@ export default class UpdateProfile {
       ? await this._hashProvider.generateHash(password)
       : user.password;
 
-    return this._repository.save({
-      ...user,
+    Object.assign(user, {
       name,
       email,
       password: newPassword,
     });
+
+    return this._repository.save(user);
   }
 }

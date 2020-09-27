@@ -4,9 +4,10 @@ import AppError from '@shared/errors/AppError';
 import User, {
   UserInterface,
 } from '@modules/users/infra/typeorm/entities/User';
-import IUserRepository from '@modules/users/repositories/IUserRepository';
 
+import IUserRepository from '@modules/users/repositories/IUserRepository';
 import IHashProvider from '@modules/users/providers/HashProvider/models/IHashProvider';
+import ICacheProvider from '@shared/container/providers/CacheProviders/models/ICacheProvider';
 
 @injectable()
 export default class CreateUser {
@@ -14,13 +15,16 @@ export default class CreateUser {
 
   private _repository: IUserRepository;
   private _hashProvider: IHashProvider;
+  private _cache: ICacheProvider;
 
   constructor(
     @inject('UsersRepository') repository: IUserRepository,
-    @inject('HashProvider') hashProvider: IHashProvider
+    @inject('HashProvider') hashProvider: IHashProvider,
+    @inject(`CacheProvider`) cache: ICacheProvider
   ) {
     this._repository = repository;
     this._hashProvider = hashProvider;
+    this._cache = cache;
   }
 
   async execute({ name, email, password }: UserInterface): Promise<User> {
@@ -48,6 +52,8 @@ export default class CreateUser {
       email,
       password: passwordHash,
     });
+
+    await this._cache.invalidatePrefix('providers-list');
     return user;
   }
 }

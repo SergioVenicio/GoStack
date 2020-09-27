@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { container } from 'tsyringe';
+import { classToClass } from 'class-transformer';
 
 import { UserInterface } from '@modules/users/infra/typeorm/entities/User';
 
@@ -11,12 +12,6 @@ export default class UsersController {
     const { name, email, password } = <UserInterface>request.body;
     const user = await service.execute({ name, email, password });
 
-    return response.json({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      created_at: user.created_at,
-      updated_at: user.updated_at,
-    });
+    return response.json(classToClass(user));
   }
 }

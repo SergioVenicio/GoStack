@@ -12,6 +12,27 @@ services:
     expose:
       - 5432
     restart: always
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=gobarber
+      - MONGO_INITDB_ROOT_PASSWORD=gobarber
+    ports:
+      - 27017:27017
+    expose:
+      - 27017
+
+  redis:
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    expose:
+      - 6379
+    environment:
+      - ALLOW_EMPTY_PASSWORD=gobarber
 #   web:
 #     build: .
 #     volumes:

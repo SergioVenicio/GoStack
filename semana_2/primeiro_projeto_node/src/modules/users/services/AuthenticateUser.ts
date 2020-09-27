@@ -51,7 +51,7 @@ class AuthenticateUser {
         email: user.email,
         name: user.name,
       },
-      authConfig.secret,
+      authConfig.secret || 'jwt token',
       {
         subject: user.id,
         expiresIn: authConfig.expiresIn,
@@ -59,12 +59,7 @@ class AuthenticateUser {
     );
     return {
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar,
-      },
+      user,
     };
   }
 }

@@ -41,9 +41,9 @@ export default class AvatarUpload {
       this._storage.deleteFile(user.avatar);
     }
 
-    const avatar_path = await this._storage.saveFile(filename);
-    await this._repository.save({ ...user, avatar: avatar_path });
+    user.avatar = await this._storage.saveFile(filename);
 
-    return { ...user, avatar: avatar_path };
+    await this._repository.save(user);
+    return user;
   }
 }

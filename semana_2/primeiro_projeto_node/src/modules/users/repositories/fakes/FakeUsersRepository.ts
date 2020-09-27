@@ -6,6 +6,8 @@ import IUserRepository from '@modules/users/repositories/IUserRepository';
 
 import ICreateUser from '@modules/users/dtos/ICreateUser';
 
+import IFindProviderDTO from '../../dtos/IFindProvidersDTO';
+
 export default class FakeUsersRepository implements IUserRepository {
   private users: User[] = [];
 
@@ -21,6 +23,12 @@ export default class FakeUsersRepository implements IUserRepository {
 
     await this.save(newUser);
     return newUser;
+  }
+
+  public async findAll({ except_user_id }: IFindProviderDTO): Promise<User[]> {
+    return except_user_id
+      ? this.users.filter((u) => u.id != except_user_id)
+      : this.users;
   }
 
   public async save(user: User): Promise<User> {
