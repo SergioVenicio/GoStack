@@ -65,15 +65,11 @@ class AppointmentsRepository implements IAppointmentsReporitory {
   }: IFindAllInDayDTO): Promise<Appointment[]> {
     const parsedDay = String(day).padStart(2, `0`);
     const parsedMonth = String(month).padStart(2, `0`);
-    console.log(provider_id);
 
     const appointments = await this._repository.find({
       where: {
         provider_id,
         date: Raw((dateFieldName) => {
-          console.log(
-            `TO_CHAR(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`
-          );
           return `TO_CHAR(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`;
         }),
       },

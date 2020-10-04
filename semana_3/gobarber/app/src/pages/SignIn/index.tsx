@@ -64,12 +64,10 @@ const SignIn: React.FC = () => {
         email: data.email,
         password: data.password,
       });
-      console.log(user);
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
         const errors = getValidationErrors(error);
         formRef.current?.setErrors(errors);
-
         return;
       }
 

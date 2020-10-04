@@ -1,6 +1,6 @@
 import React, { useRef, useCallback } from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import { FiLogIn, FiMail, FiLock } from "react-icons/fi";
 import { FormHandles } from "@unform/core";
@@ -20,6 +20,7 @@ import getValidationErrors from "../../utils/getValidationErrors";
 
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const history = useHistory();
   const { signIn } = useAuthContext();
   const { addToast } = useToastContext();
 
@@ -41,6 +42,8 @@ const SignIn: React.FC = () => {
           email: data.email,
           password: data.password,
         });
+
+        history.push("/dashboard");
       } catch (error) {
         if (error instanceof Yup.ValidationError) {
           const errors = getValidationErrors(error);

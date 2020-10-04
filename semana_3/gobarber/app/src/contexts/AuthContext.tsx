@@ -15,17 +15,25 @@ interface SignInCredentials {
   password: string;
 }
 
+interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  avatar_url: string;
+}
+
 interface AuthContextState {
-  user: object;
-  loading: true;
+  user: IUser;
+  loading: boolean;
   signIn({ email, password }: SignInCredentials): Promise<void>;
   signOut(): void;
+  updateUser(user: IUser): void;
 }
 const AuthContext = createContext<AuthContextState>({} as AuthContextState);
 
 interface AuthState {
   token: string;
-  user: object;
+  user: IUser;
 }
 const AuthContextProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthState>({} as AuthState);
@@ -45,6 +53,8 @@ const AuthContextProvider: React.FC = ({ children }) => {
         token,
       });
 
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
       await AsyncStorage.multiSet([
         ["@GOBARBER:token", token],
         ["@GOBARBER:user", JSON.stringify(user)],
@@ -58,6 +68,20 @@ const AuthContextProvider: React.FC = ({ children }) => {
     await AsyncStorage.multiRemove(["@GOBARBER:token", "@GOBARBER:user"]);
   }, []);
 
+  const updateUser = useCallback(
+    async (user: IUser) => {
+      setData({
+        token: data.token,
+        user,
+      });
+      await AsyncStorage.multiSet([
+        ["@GOBARBER:token", data.token],
+        ["@GOBARBER:user", JSON.stringify(user)],
+      ]);
+    },
+    [setData, data.token]
+  );
+
   useEffect(() => {
     async function loadStorage(): Promise<void> {
       const [token, user] = await AsyncStorage.multiGet([
@@ -66,6 +90,7 @@ const AuthContextProvider: React.FC = ({ children }) => {
       ]);
 
       if (token[1] && user[1]) {
+        api.defaults.headers.authorization = `Bearer ${token[1]}`;
         setData({ user: JSON.parse(user[1]), token: token[1] });
       }
 
@@ -76,7 +101,9 @@ const AuthContextProvider: React.FC = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user: data.user, signIn, signOut, loading }}>
+    <AuthContext.Provider
+      value={{ user: data.user, signIn, signOut, updateUser, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );
